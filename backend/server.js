@@ -4,7 +4,7 @@ const User = require('./models/User');
 const Courier = require('./models/Courier');
 const cors = require('cors');
 
-mongoose.connect('mongodb://localhost:27017/testdb');
+mongoose.connect('mongodb+srv://admin:admin@123@cluster0.oaxomus.mongodb.net/');
 
 const db = mongoose.connection;
 

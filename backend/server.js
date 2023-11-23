@@ -4,7 +4,7 @@ const User = require('./models/User');
 const Courier = require('./models/Courier');
 const cors = require('cors');
 
-mongoose.connect('mongodb+srv://admin:admin@123@cluster0.oaxomus.mongodb.net/?retryWrites=true&w=majority');
+mongoose.connect('mongodb+srv://admin:admin%40123@cluster0.oaxomus.mongodb.net/myDatabase?retryWrites=true&w=majority');
 
 const db = mongoose.connection;
 

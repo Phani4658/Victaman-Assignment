@@ -1,10 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const User = require('./models/User');
 const Courier = require('./models/Courier');
-
+const cors = require('cors');
 
 mongoose.connect('mongodb://localhost:27017/testdb');
 
@@ -17,9 +15,10 @@ db.on('error', (err) => {
 db.once('open', () => {
   console.log('Database connection established');
 });
-
 const app = express();
-app.use(express.json());
+app.use(express.json());    
+app.use(cors());
+
 
 //Register Function
 app.post('/register', async (req, res) => {
@@ -27,8 +26,7 @@ app.post('/register', async (req, res) => {
     try {
         const existingUser = await User.findOne({ username });
         if (!existingUser) {
-            const hashedPass = await bcrypt.hash(password, 10);
-            await User.create({ role, password: hashedPass, username });
+            await User.create({ role, password, username });
             res.send("User Created Successfully");
         } else {
             res.send("Username already exists");
@@ -41,28 +39,23 @@ app.post('/register', async (req, res) => {
 
 // Login Function
 app.post('/login', async (req, res) => {
+  console.log(req);
   const { username, password } = req.body;
-
+  console.log(username,password);
   try {
     const user = await User.findOne({ username });
-
+    console.log(user);
     if (!user) {
       return res.status(401).json({ message: 'Invalid username or password' });
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const passwordMatch = user.password === password;
 
     if (!passwordMatch) {
       return res.status(401).json({ message: 'Invalid username or password' });
     }
 
-    const token = jwt.sign(
-      { username: user.username, role: user.role },
-      'your_secret_key',
-      { expiresIn: '1h' }
-    );
-
-    res.json({ token,role: user.role });
+    res.json({ role: user.role });
   } catch (error) {
     res.status(500).json({ message: 'Internal Server Error' });
   }
